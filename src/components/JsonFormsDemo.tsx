@@ -1,14 +1,15 @@
-import { INIT, UPDATE_DATA } from '@jsonforms/core';
 import { materialRenderers } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { FC, useCallback } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import ratingControlTester from '../ratingControlTester';
-import schema from '../schema.json';
-import RatingControl from './RatingControl';
+import { FC } from 'react';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import Form from './Form';
+import Form2 from './Form2';
+import form2ControlTester from './form2ControlTester';
+import formControlTester from './formControlTester';
+import uischema from './uischema.json';
 
 const classes = {
   container: {
@@ -36,19 +37,11 @@ const classes = {
   },
 };
 
-const initialData = {
-  name: 'Send email to Adrian',
-  description: 'Confirm if you have passed the subject\nHereby ...',
-  done: true,
-  recurrence: 'Daily',
-  rating: 3,
-};
-
 const renderers = [
   ...materialRenderers,
   //register custom renderers
-  { tester: ratingControlTester, renderer: RatingControl },
-  { tester: ratingControlTester, renderer: Form },
+  { tester: formControlTester, renderer: Form },
+  { tester: form2ControlTester, renderer: Form2 },
 ];
 
 type Inputs = {
@@ -57,68 +50,18 @@ type Inputs = {
 };
 
 export const JsonFormsDemo: FC = () => {
-  /* const [data, setData] = useState<object>(initialData); */
-  /* const [errors, setErrors] = useState([]); */
-  /*  const stringifiedData = useMemo(() => JSON.stringify(data, null, 2), [data]); */
+  const methods = useForm<Inputs>();
 
   const {
-    register,
-    handleSubmit,
-    watch,
     getValues,
-    setValue,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = methods;
+
+  console.log(errors, 'errors');
 
   const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
 
   const data = getValues();
-
-  /* console.log('errors', errors); */
-
-  /*   const clearData = () => {
-    setData({});
-  }; */
-
-  /*   const validateActivity = useCallback(data => {
-    switch (data.name) {
-      case 'Send email to Peppe':
-        setErrors([
-          {
-            instancePath: '/name',
-            message: 'No Snow',
-            schemaPath: '#/properties/name',
-          },
-        ]);
-        break;
-      default:
-        setErrors([]);
-    }
-  }, []); */
-
-  const middleware = useCallback((state, action, defaultReducer) => {
-    const newState = defaultReducer(state, action);
-
-    console.log(state);
-
-    /*     console.log('old state', state);
-    console.log('action', action);
-    console.log('newState', newState); */
-
-    /*
-     * action contains the path of the updated value
-     */
-    switch (action.type) {
-      case INIT:
-      case UPDATE_DATA: {
-        /* setData(newState.data); */
-        /*   validateActivity(newState.data); */
-        return state;
-      }
-      default:
-        return newState;
-    }
-  }, []);
 
   return (
     <Grid
@@ -142,43 +85,26 @@ export const JsonFormsDemo: FC = () => {
       <Grid item sm={6}>
         <Typography variant={'h4'}>Rendered form</Typography>
         <div style={classes.demoform}>
-          <JsonForms
-            schema={schema}
-            data={data}
-            renderers={renderers}
-            validationMode="NoValidation"
-            middleware={middleware}
-          />
+          <FormProvider {...methods}>
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              <JsonForms
+                data={data}
+                uischema={uischema}
+                renderers={renderers}
+                validationMode="NoValidation"
+              />
+              <button type="submit">Submit</button>
+            </form>
+          </FormProvider>
         </div>
+      </Grid>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* register your input into the hook by invoking the "register" function */}
-          <input defaultValue="test" {...register('name')} />
-
-          {/* include validation with required or other standard HTML validation rules */}
-          <input {...register('description', { required: true })} />
-          {/* errors will return when field validation fails  */}
-          {errors.description && <span>This field is required</span>}
-
-          <input type="submit" />
-        </form>
+      <Grid item sm={6}>
+        <Typography variant={'h4'}>Bound data</Typography>
+        <div style={classes.dataContent}>
+          <pre id="boundData">{JSON.stringify(data, null, 2)}</pre>
+        </div>
       </Grid>
     </Grid>
-  );
-};
-
-const Form = () => {
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {/* register your input into the hook by invoking the "register" function */}
-      <input defaultValue="test" {...register('name')} />
-
-      {/* include validation with required or other standard HTML validation rules */}
-      <input {...register('description', { required: true })} />
-      {/* errors will return when field validation fails  */}
-      {errors.description && <span>This field is required</span>}
-
-      <input type="submit" />
-    </form>
   );
 };

@@ -10,6 +10,7 @@ import Form2 from './Form2';
 import form2ControlTester from './form2ControlTester';
 import formControlTester from './formControlTester';
 import uischema from './uischema.json';
+import { useJourneyStore } from '../App';
 
 const classes = {
   container: {
@@ -45,19 +46,26 @@ const renderers = [
 ];
 
 type Inputs = {
-  name: string;
-  description: string;
+  form: {
+    name: string;
+    description: string;
+  };
+  form2: {
+    username: string;
+    petname: string;
+  };
 };
 
 export const JsonFormsDemo: FC = () => {
-  const methods = useForm<Inputs>();
+  const journeyStore = useJourneyStore();
+  const methods = useForm<Inputs>({
+    defaultValues: journeyStore,
+  });
 
   const {
     getValues,
     formState: { errors },
   } = methods;
-
-  console.log(errors, 'errors');
 
   const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
 
@@ -94,6 +102,7 @@ export const JsonFormsDemo: FC = () => {
                 validationMode="NoValidation"
               />
               <button type="submit">Submit</button>
+              <button onClick={() => journeyStore.setName('JACK')}>JACK</button>
             </form>
           </FormProvider>
         </div>

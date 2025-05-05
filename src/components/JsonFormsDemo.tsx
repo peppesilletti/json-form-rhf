@@ -59,7 +59,7 @@ type Inputs = {
 export const JsonFormsDemo: FC = () => {
   const journeyStore = useJourneyStore();
   const methods = useForm<Inputs>({
-    defaultValues: journeyStore,
+    values: journeyStore,
   });
 
   const {
@@ -70,6 +70,8 @@ export const JsonFormsDemo: FC = () => {
   const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
 
   const data = getValues();
+
+  console.log(data, 'data');
 
   return (
     <Grid

@@ -15,6 +15,8 @@ import form2ControlTester from './form2ControlTester';
 import form3ControlTester from './form3ControlTester';
 import form4ControlTester from './form4ControlTester';
 import formControlTester from './formControlTester';
+import Summary from './Summary/Control';
+import summaryControlTester from './summaryControlTester';
 
 const classes = {
   container: {
@@ -52,6 +54,7 @@ const renderers = [
   { tester: form3ControlTester, renderer: Form3 },
   { tester: form4ControlTester, renderer: Form4 },
   { tester: customBlockControlTester, renderer: CustomBlock },
+  { tester: summaryControlTester, renderer: Summary },
 ];
 
 export const Step: FC<{

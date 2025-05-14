@@ -7,7 +7,7 @@ import { Header } from './components/Header';
 import { Step } from './components/Step';
 import uischema from './components/uischema.json';
 import uischema2 from './components/uischema2.json';
-
+import uischema3 from './components/uischema3.json';
 interface JourneyState {
   form: {
     name: string;
@@ -103,6 +103,11 @@ const steps: {
     }),
     uischema: uischema2,
   },
+  {
+    id: 'step3',
+    schema: z.object({}),
+    uischema: uischema3,
+  },
 ];
 
 const App = () => {
@@ -140,6 +145,8 @@ const App = () => {
             journeyStore.setAge(data.form3.age ?? '');
             // @ts-expect-error
             journeyStore.setCity(data.form4.city ?? '');
+
+            journeyStore.nextStep();
           }
 
           if (currentStep.id === 'step1') {

@@ -1,0 +1,17 @@
+{
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "Control",
+      "scope": "#/properties/form3"
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/form4"
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/custom"
+    }
+  ]
+}
